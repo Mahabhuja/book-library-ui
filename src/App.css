@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 6vmin;
+  height: 4vmin;
   pointer-events: none;
 }
 
@@ -26,6 +26,10 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.Right-padding-5 {
+  padding-right: 5px;
 }
 
 @keyframes App-logo-spin {

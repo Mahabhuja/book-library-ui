@@ -1,9 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -13,28 +12,22 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './ListItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import {books, mainListItems, secondaryListItems} from './ListItems';
+import logo from './logo.svg';
+import Book from './Book';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import SearchIcon from '@material-ui/icons/Search';
+import InputBase from '@material-ui/core/InputBase';
+import SortIcon from '@material-ui/icons/Sort';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import ListItemText from "@material-ui/core/ListItemText";
+import Order from "./Order";
 
 const drawerWidth = 240;
 
@@ -113,20 +106,78 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
     },
     fixedHeight: {
-        height: 240,
+        height: 200,
+    },
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginRight: theme.spacing(2),
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(3),
+            width: 'auto',
+        },
+    },
+    searchIcon: {
+        padding: theme.spacing(0, 2),
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+    },
+    inputInput: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
     },
 }));
 
 export default function BookStore() {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
+    const [hideCatalogue, setHideCatalogue] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const openSorting = Boolean(anchorEl);
+
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const showCatalogue = () => {
+        setHideCatalogue(false);
+    }
+
+    const showOrders = () => {
+        setHideCatalogue(true);
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     const handleDrawerOpen = () => {
-        setOpen(true);
+        setOpen(false);
     };
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    const searchedBooks = books;
 
     return (
         <div className={classes.root}>
@@ -143,11 +194,60 @@ export default function BookStore() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Book Store
+                        <img src={logo} className="App-logo Right-padding-5" alt="logo" />
+                        Library
                     </Typography>
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon />
+                        </div>
+                        <InputBase
+                            placeholder="Search"
+                            classes={{
+                                root: classes.inputRoot,
+                                input: classes.inputInput,
+                            }}
+                            inputProps={{ 'aria-label': 'search' }}
+                        />
+                    </div>
                     <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
+
+                        <div>
+                            <IconButton
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleMenu}
+                                color="inherit"
+                            >
+                                <SortIcon />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={openSorting}
+                                onClose={handleClose}
+                            >
+                                <Typography>Sort By</Typography>
+                                <Divider />
+                                <MenuItem onClick={handleClose}>Genre</MenuItem>
+                                <MenuItem onClick={handleClose}>Author</MenuItem>
+                            </Menu>
+                        </div>
+
+                    </IconButton>
+                    <IconButton color="inherit">
+                        <Badge badgeContent={1} color="secondary">
+                            <ShoppingCartIcon />
                         </Badge>
                     </IconButton>
                 </Toolbar>
@@ -157,44 +257,49 @@ export default function BookStore() {
                 classes={{
                     paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
                 }}
-                open={open}
-            >
+                open={open}>
                 <div className={classes.toolbarIcon}>
                     <IconButton onClick={handleDrawerClose}>
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
+                <List>
+                    <div>
+                        <ListItem button onClick={showCatalogue}>
+                            <ListItemIcon title="Catalogue">
+                                <DashboardIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Catalogue" />
+                        </ListItem>
+                        <ListItem button onClick={showOrders}>
+                            <ListItemIcon title="Orders">
+                                <ShoppingCartIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Orders" />
+                        </ListItem>
+                    </div>
+                </List>
                 <Divider />
                 <List>{secondaryListItems}</List>
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
+                    <div hidden={hideCatalogue}>
                     <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item xs={12} md={8} lg={9}>
-                            <Paper className={fixedHeightPaper}>
-                                <Chart />
-                            </Paper>
+                        {searchedBooks.map(b =>
+                        <Grid item xs={12} md={3} lg={2}>
+                            <Book bookTitle={b.title} author={b.author} genre={b.genre} isdn={b.isdn} />
                         </Grid>
-                        {/* Recent Deposits */}
-                        <Grid item xs={12} md={4} lg={3}>
-                            <Paper className={fixedHeightPaper}>
-                                <Deposits />
-                            </Paper>
-                        </Grid>
-                        {/* Recent Orders */}
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <Orders />
-                            </Paper>
-                        </Grid>
+                        )}
                     </Grid>
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
+                    </div>
+                    <div hidden={!hideCatalogue}>
+                        <Grid container spacing={3}>
+                                <Order/>
+                        </Grid>
+                    </div>
                 </Container>
             </main>
         </div>
