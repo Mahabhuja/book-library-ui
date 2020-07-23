@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
     leftAlign: {
         left: 0,
-        display: "inline-block"
+        display: "inline-flex"
     },
     paper: {
         padding: '6px 16px',
